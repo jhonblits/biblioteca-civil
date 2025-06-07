@@ -1,1 +1,397 @@
- 
+/* ========================================
+   TARJETAS DE RECURSOS
+   ======================================== */
+
+.resource-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--bg-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.resource-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--primary-color);
+}
+
+.resource-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), #3b82f6);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.resource-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Header de la tarjeta */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-md);
+}
+
+.resource-type {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Tipos de recursos */
+.type-libro {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.type-tesis {
+  background: rgba(147, 51, 234, 0.1);
+  color: #7c3aed;
+}
+
+.type-proyecto {
+  background: rgba(5, 150, 105, 0.1);
+  color: #059669;
+}
+
+.type-revista {
+  background: rgba(217, 119, 6, 0.1);
+  color: #d97706;
+}
+
+.type-articulo {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+/* Estado del recurso */
+.resource-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-disponible {
+  background: rgba(5, 150, 105, 0.1);
+  color: #059669;
+}
+
+.status-prestado {
+  background: rgba(217, 119, 6, 0.1);
+  color: #d97706;
+}
+
+.status-mantenimiento {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+/* Contenido de la tarjeta */
+.card-content {
+  margin-bottom: var(--spacing-lg);
+}
+
+.resource-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.resource-author {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.875rem;
+}
+
+.resource-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.resource-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Acciones de la tarjeta */
+.card-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.btn-action {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.btn-view {
+  background: var(--info-color);
+  color: white;
+}
+
+.btn-view:hover {
+  background: #0369a1;
+  transform: translateY(-1px);
+}
+
+.btn-borrow {
+  background: var(--success-color);
+  color: white;
+}
+
+.btn-borrow:hover {
+  background: #047857;
+  transform: translateY(-1px);
+}
+
+.btn-edit {
+  background: var(--warning-color);
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #b45309;
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  background: var(--error-color);
+  color: white;
+}
+
+.btn-delete:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.btn-disabled {
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.btn-disabled:hover {
+  transform: none;
+}
+
+/* Vista de lista */
+.recursos-list .resource-card {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+.recursos-list .card-header {
+  margin-bottom: 0;
+  margin-right: var(--spacing-lg);
+  min-width: 120px;
+}
+
+.recursos-list .card-content {
+  flex: 1;
+  margin-bottom: 0;
+  margin-right: var(--spacing-lg);
+}
+
+.recursos-list .resource-title {
+  font-size: 1rem;
+  margin-bottom: var(--spacing-xs);
+  -webkit-line-clamp: 1;
+}
+
+.recursos-list .resource-description {
+  -webkit-line-clamp: 1;
+  margin-bottom: 0;
+}
+
+.recursos-list .card-actions {
+  min-width: 200px;
+  justify-content: flex-end;
+}
+
+/* Indicadores especiales */
+.resource-card.featured {
+  border-color: var(--accent-color);
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.05), rgba(5, 150, 105, 0.02));
+}
+
+.resource-card.new-arrival {
+  position: relative;
+}
+
+.resource-card.new-arrival::after {
+  content: 'NUEVO';
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  background: var(--accent-color);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Animaciones */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resource-card {
+  animation: slideIn 0.3s ease forwards;
+}
+
+/* Estados de carga */
+.resource-card.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.resource-card.loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Responsive para tarjetas */
+@media (max-width: 768px) {
+  .recursos-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .recursos-list .resource-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .recursos-list .card-header,
+  .recursos-list .card-content,
+  .recursos-list .card-actions {
+    margin-right: 0;
+    margin-bottom: var(--spacing-sm);
+    min-width: auto;
+  }
+  
+  .card-actions {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  .action-buttons {
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+/* Tarjeta expandida (para vista detallada) */
+.resource-card.expanded {
+  grid-column: 1 / -1;
+  max-width: none;
+}
+
+.resource-card.expanded .resource-description {
+  -webkit-line-clamp: unset;
+  max-height: none;
+  overflow: visible;
+}
+
+.expanded-content {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--bg-tertiary);
+}
+
+.resource-details {
+  display: grid;
+  grid-template-columns: 

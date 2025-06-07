@@ -1,1 +1,328 @@
- 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Civil - Sistema de Gestión Bibliográfica</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/components/modal.css">
+    <link rel="stylesheet" href="css/components/cards.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-brand">
+                <i class="fas fa-book-open"></i>
+                <h1>Biblioteca Civil</h1>
+            </div>
+            <div class="nav-menu">
+                <a href="#inicio" class="nav-link active">Inicio</a>
+                <a href="#catalogo" class="nav-link">Catálogo</a>
+                <a href="#estadisticas" class="nav-link">Estadísticas</a>
+                <a href="#ayuda" class="nav-link">Ayuda</a>
+            </div>
+            <div class="nav-actions">
+                <button class="btn-icon" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+                <button class="btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-plus"></i> Agregar Recurso
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero" id="inicio">
+            <div class="hero-content">
+                <h1>Sistema de Gestión Bibliográfica</h1>
+                <p>Organiza, busca y gestiona todos los recursos de tu biblioteca de manera eficiente</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="total-recursos">0</span>
+                        <span class="stat-label">Total Recursos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="recursos-disponibles">0</span>
+                        <span class="stat-label">Disponibles</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="recursos-prestados">0</span>
+                        <span class="stat-label">Prestados</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Buscar por título, autor, ISBN, tema...">
+                    <button class="search-btn" onclick="buscarRecursos()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <label><i class="fas fa-filter"></i> Tipo:</label>
+                        <select id="filter-tipo">
+                            <option value="">Todos</option>
+                            <option value="libro">Libros</option>
+                            <option value="tesis">Tesis</option>
+                            <option value="proyecto">Proyectos</option>
+                            <option value="revista">Revistas</option>
+                            <option value="articulo">Artículos</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label><i class="fas fa-calendar"></i> Año:</label>
+                        <select id="filter-año">
+                            <option value="">Todos</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label><i class="fas fa-tags"></i> Materia:</label>
+                        <select id="filter-materia">
+                            <option value="">Todas</option>
+                            <option value="matemáticas">Matemáticas</option>
+                            <option value="literatura">Literatura</option>
+                            <option value="ciencias">Ciencias</option>
+                            <option value="historia">Historia</option>
+                            <option value="tecnología">Tecnología</option>
+                            <option value="filosofía">Filosofía</option>
+                            <option value="arte">Arte</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label><i class="fas fa-check-circle"></i> Estado:</label>
+                        <select id="filter-estado">
+                            <option value="">Todos</option>
+                            <option value="disponible">Disponible</option>
+                            <option value="prestado">Prestado</option>
+                            <option value="mantenimiento">Mantenimiento</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn-clear" onclick="limpiarFiltros()">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section" id="catalogo">
+            <div class="results-header">
+                <h2><i class="fas fa-books"></i> Catálogo de Recursos</h2>
+                <div class="results-controls">
+                    <div class="view-toggle">
+                        <button class="view-btn active" data-view="grid" onclick="cambiarVista('grid')">
+                            <i class="fas fa-th"></i>
+                        </button>
+                        <button class="view-btn" data-view="list" onclick="cambiarVista('list')">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                    <div class="sort-controls">
+                        <label>Ordenar por:</label>
+                        <select id="sort-select" onchange="ordenarRecursos()">
+                            <option value="titulo">Título</option>
+                            <option value="autor">Autor</option>
+                            <option value="año">Año</option>
+                            <option value="tipo">Tipo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-info">
+                <span id="results-count">Mostrando 0 resultados</span>
+            </div>
+            
+            <div id="recursos-container" class="recursos-grid">
+                <!-- Los recursos se cargarán dinámicamente aquí -->
+            </div>
+            
+            <div id="no-results" class="no-results" style="display: none;">
+                <i class="fas fa-search"></i>
+                <h3>No se encontraron resultados</h3>
+                <p>Intenta modificar los filtros de búsqueda o agregar nuevos recursos</p>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section class="stats-section" id="estadisticas">
+            <h2><i class="fas fa-chart-bar"></i> Estadísticas de la Biblioteca</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-book"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-libros">0</span>
+                        <span class="stat-title">Libros</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-tesis">0</span>
+                        <span class="stat-title">Tesis</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-project-diagram"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-proyectos">0</span>
+                        <span class="stat-title">Proyectos</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-newspaper"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-revistas">0</span>
+                        <span class="stat-title">Revistas</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add Resource Modal -->
+    <div id="add-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Agregar Nuevo Recurso</h3>
+                <button class="close-btn" onclick="closeAddModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="add-form" onsubmit="agregarRecurso(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nuevo-tipo">Tipo de Recurso *</label>
+                        <select id="nuevo-tipo" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="libro">Libro</option>
+                            <option value="tesis">Tesis</option>
+                            <option value="proyecto">Proyecto</option>
+                            <option value="revista">Revista</option>
+                            <option value="articulo">Artículo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nuevo-estado">Estado *</label>
+                        <select id="nuevo-estado" required>
+                            <option value="disponible">Disponible</option>
+                            <option value="prestado">Prestado</option>
+                            <option value="mantenimiento">Mantenimiento</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nuevo-titulo">Título *</label>
+                    <input type="text" id="nuevo-titulo" placeholder="Título del recurso" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nuevo-autor">Autor *</label>
+                        <input type="text" id="nuevo-autor" placeholder="Nombre del autor" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="nuevo-año">Año de Publicación *</label>
+                        <input type="number" id="nuevo-año" min="1900" max="2024" placeholder="2024" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nueva-materia">Materia *</label>
+                        <select id="nueva-materia" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="matemáticas">Matemáticas</option>
+                            <option value="literatura">Literatura</option>
+                            <option value="ciencias">Ciencias</option>
+                            <option value="historia">Historia</option>
+                            <option value="tecnología">Tecnología</option>
+                            <option value="filosofía">Filosofía</option>
+                            <option value="arte">Arte</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="nuevo-isbn">ISBN (opcional)</label>
+                        <input type="text" id="nuevo-isbn" placeholder="978-XXX-XXX-XXX-X">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nueva-descripcion">Descripción</label>
+                    <textarea id="nueva-descripcion" rows="3" placeholder="Breve descripción del contenido..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nueva-ubicacion">Ubicación Física</label>
+                    <input type="text" id="nueva-ubicacion" placeholder="Ej: Estante A, Nivel 2, Sección 3">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeAddModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Guardar Recurso
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Resource Modal -->
+    <div id="view-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-eye"></i> Detalle del Recurso</h3>
+                <button class="close-btn" onclick="closeViewModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="view-content">
+                <!-- El contenido se cargará dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Biblioteca Civil - Sistema de Gestión Bibliográfica</p>
+            <p>Desarrollado con 💙 para la comunidad educativa</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/modules/database.js"></script>
+    <script src="js/modules/utils.js"></script>
+    <script src="js/modules/search.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 
