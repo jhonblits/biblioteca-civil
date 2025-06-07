@@ -10,10 +10,35 @@
     <link rel="stylesheet" href="css/components/cards.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Meta tags para mejor SEO -->
+    <meta name="description" content="Sistema moderno de gestión bibliográfica para bibliotecas civiles. Organiza, busca y gestiona recursos de manera eficiente.">
+    <meta name="keywords" content="biblioteca, gestión bibliográfica, libros, tesis, proyectos, sistema">
+    <meta name="author" content="Jhon Yauri">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 </head>
 <body>
+    <!-- Loader de página -->
+    <div id="page-loader" class="page-loader">
+        <div class="loader-content">
+            <div class="book-loader">
+                <div class="book">
+                    <div class="page"></div>
+                    <div class="page"></div>
+                    <div class="page"></div>
+                </div>
+            </div>
+            <h3>Cargando Biblioteca Civil...</h3>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Header Navigation -->
     <header class="header">
         <nav class="navbar">
@@ -22,13 +47,13 @@
                 <h1>Biblioteca Civil</h1>
             </div>
             <div class="nav-menu">
-                <a href="#inicio" class="nav-link active">Inicio</a>
-                <a href="#catalogo" class="nav-link">Catálogo</a>
-                <a href="#estadisticas" class="nav-link">Estadísticas</a>
-                <a href="#ayuda" class="nav-link">Ayuda</a>
+                <a href="#inicio" class="nav-link active">🏠 Inicio</a>
+                <a href="#catalogo" class="nav-link">📚 Catálogo</a>
+                <a href="#estadisticas" class="nav-link">📊 Estadísticas</a>
+                <a href="#ayuda" class="nav-link">❓ Ayuda</a>
             </div>
             <div class="nav-actions">
-                <button class="btn-icon" onclick="toggleTheme()">
+                <button class="btn-icon" onclick="toggleTheme()" title="Cambiar tema">
                     <i class="fas fa-moon" id="theme-icon"></i>
                 </button>
                 <button class="btn-primary" onclick="openAddModal()">
@@ -40,122 +65,172 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Hero Section -->
+        <!-- Hero Section con Video -->
         <section class="hero" id="inicio">
+            <!-- Video de fondo (opcional) -->
+            <video class="hero-video" autoplay muted loop poster="assets/images/library-hero.jpg">
+                <source src="assets/videos/library-intro.mp4" type="video/mp4">
+                <source src="assets/videos/library-intro.webm" type="video/webm">
+            </video>
+            
             <div class="hero-content">
                 <h1>Sistema de Gestión Bibliográfica</h1>
-                <p>Organiza, busca y gestiona todos los recursos de tu biblioteca de manera eficiente</p>
+                <p>Organiza, busca y gestiona todos los recursos de tu biblioteca de manera eficiente y moderna</p>
+                
                 <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-number" id="total-recursos">0</span>
+                    <div class="stat-item glass-effect">
+                        <span class="stat-number" id="total-recursos" data-target="0">0</span>
                         <span class="stat-label">Total Recursos</span>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="recursos-disponibles">0</span>
+                    <div class="stat-item glass-effect">
+                        <span class="stat-number" id="recursos-disponibles" data-target="0">0</span>
                         <span class="stat-label">Disponibles</span>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="recursos-prestados">0</span>
+                    <div class="stat-item glass-effect">
+                        <span class="stat-number" id="recursos-prestados" data-target="0">0</span>
                         <span class="stat-label">Prestados</span>
                     </div>
                 </div>
+                
+                <!-- Botones de acción principales -->
+                <div class="hero-actions" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn-primary btn-lg" onclick="window.BibliotecaUtils.scrollAElemento('catalogo')">
+                        <i class="fas fa-search"></i> Explorar Catálogo
+                    </button>
+                    <button class="btn-secondary btn-lg" onclick="openAddModal()">
+                        <i class="fas fa-plus-circle"></i> Agregar Recurso
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Indicador de scroll -->
+            <div class="scroll-indicator">
+                <i class="fas fa-chevron-down"></i>
             </div>
         </section>
 
-        <!-- Search Section -->
-        <section class="search-section">
+        <!-- Search Section Mejorada -->
+        <section class="search-section glass-effect scroll-reveal">
             <div class="search-container">
+                <h2 style="text-align: center; margin-bottom: 2rem; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-size: 2rem; font-weight: 800;">
+                    <i class="fas fa-search"></i> Centro de Búsqueda Avanzada
+                </h2>
+                
                 <div class="search-bar">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" id="search-input" placeholder="Buscar por título, autor, ISBN, tema...">
+                    <input type="text" id="search-input" placeholder="Buscar por título, autor, ISBN, tema... ✨">
                     <button class="search-btn" onclick="buscarRecursos()">
-                        <i class="fas fa-search"></i>
+                        <i class="fas fa-search"></i> Buscar
                     </button>
                 </div>
                 
                 <div class="search-filters">
-                    <div class="filter-group">
+                    <div class="filter-group stagger-animation">
                         <label><i class="fas fa-filter"></i> Tipo:</label>
                         <select id="filter-tipo">
-                            <option value="">Todos</option>
-                            <option value="libro">Libros</option>
-                            <option value="tesis">Tesis</option>
-                            <option value="proyecto">Proyectos</option>
-                            <option value="revista">Revistas</option>
-                            <option value="articulo">Artículos</option>
+                            <option value="">🌟 Todos</option>
+                            <option value="libro">📖 Libros</option>
+                            <option value="tesis">🎓 Tesis</option>
+                            <option value="proyecto">🚀 Proyectos</option>
+                            <option value="revista">📰 Revistas</option>
+                            <option value="articulo">📄 Artículos</option>
                         </select>
                     </div>
                     
-                    <div class="filter-group">
+                    <div class="filter-group stagger-animation">
                         <label><i class="fas fa-calendar"></i> Año:</label>
                         <select id="filter-año">
-                            <option value="">Todos</option>
-                            <option value="2024">2024</option>
-                            <option value="2023">2023</option>
-                            <option value="2022">2022</option>
-                            <option value="2021">2021</option>
-                            <option value="2020">2020</option>
+                            <option value="">📅 Todos</option>
+                            <option value="2024">📅 2024</option>
+                            <option value="2023">📅 2023</option>
+                            <option value="2022">📅 2022</option>
+                            <option value="2021">📅 2021</option>
+                            <option value="2020">📅 2020</option>
                         </select>
                     </div>
                     
-                    <div class="filter-group">
+                    <div class="filter-group stagger-animation">
                         <label><i class="fas fa-tags"></i> Materia:</label>
                         <select id="filter-materia">
-                            <option value="">Todas</option>
-                            <option value="matemáticas">Matemáticas</option>
-                            <option value="literatura">Literatura</option>
-                            <option value="ciencias">Ciencias</option>
-                            <option value="historia">Historia</option>
-                            <option value="tecnología">Tecnología</option>
-                            <option value="filosofía">Filosofía</option>
-                            <option value="arte">Arte</option>
+                            <option value="">🎯 Todas</option>
+                            <option value="matemáticas">🔢 Matemáticas</option>
+                            <option value="literatura">📚 Literatura</option>
+                            <option value="ciencias">🧪 Ciencias</option>
+                            <option value="historia">🏛️ Historia</option>
+                            <option value="tecnología">💻 Tecnología</option>
+                            <option value="filosofía">🤔 Filosofía</option>
+                            <option value="arte">🎨 Arte</option>
                         </select>
                     </div>
                     
-                    <div class="filter-group">
+                    <div class="filter-group stagger-animation">
                         <label><i class="fas fa-check-circle"></i> Estado:</label>
                         <select id="filter-estado">
-                            <option value="">Todos</option>
-                            <option value="disponible">Disponible</option>
-                            <option value="prestado">Prestado</option>
-                            <option value="mantenimiento">Mantenimiento</option>
+                            <option value="">📊 Todos</option>
+                            <option value="disponible">✅ Disponible</option>
+                            <option value="prestado">📤 Prestado</option>
+                            <option value="mantenimiento">🔧 Mantenimiento</option>
                         </select>
                     </div>
                     
-                    <button class="btn-clear" onclick="limpiarFiltros()">
-                        <i class="fas fa-times"></i> Limpiar
+                    <button class="btn-clear stagger-animation" onclick="limpiarFiltros()">
+                        <i class="fas fa-times"></i> Limpiar Filtros
                     </button>
+                </div>
+                
+                <!-- Sugerencias de búsqueda -->
+                <div class="search-suggestions" id="search-suggestions" style="display: none;">
+                    <h4>💡 Sugerencias populares:</h4>
+                    <div class="suggestion-tags">
+                        <span class="suggestion-tag" onclick="buscarTermino('matemáticas')">🔢 Matemáticas</span>
+                        <span class="suggestion-tag" onclick="buscarTermino('literatura')">📚 Literatura</span>
+                        <span class="suggestion-tag" onclick="buscarTermino('tecnología')">💻 Tecnología</span>
+                        <span class="suggestion-tag" onclick="buscarTermino('ciencias')">🧪 Ciencias</span>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Results Section -->
-        <section class="results-section" id="catalogo">
+        <!-- Results Section Mejorada -->
+        <section class="results-section scroll-reveal" id="catalogo">
             <div class="results-header">
-                <h2><i class="fas fa-books"></i> Catálogo de Recursos</h2>
+                <h2>
+                    <i class="fas fa-books"></i> 
+                    <span style="background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Catálogo de Recursos
+                    </span>
+                </h2>
                 <div class="results-controls">
                     <div class="view-toggle">
-                        <button class="view-btn active" data-view="grid" onclick="cambiarVista('grid')">
+                        <button class="view-btn active" data-view="grid" onclick="cambiarVista('grid')" title="Vista en tarjetas">
                             <i class="fas fa-th"></i>
                         </button>
-                        <button class="view-btn" data-view="list" onclick="cambiarVista('list')">
+                        <button class="view-btn" data-view="list" onclick="cambiarVista('list')" title="Vista en lista">
                             <i class="fas fa-list"></i>
                         </button>
                     </div>
                     <div class="sort-controls">
-                        <label>Ordenar por:</label>
+                        <label><i class="fas fa-sort"></i> Ordenar por:</label>
                         <select id="sort-select" onchange="ordenarRecursos()">
-                            <option value="titulo">Título</option>
-                            <option value="autor">Autor</option>
-                            <option value="año">Año</option>
-                            <option value="tipo">Tipo</option>
+                            <option value="titulo">📝 Título</option>
+                            <option value="autor">👤 Autor</option>
+                            <option value="año">📅 Año</option>
+                            <option value="tipo">📂 Tipo</option>
                         </select>
                     </div>
                 </div>
             </div>
             
             <div class="results-info">
-                <span id="results-count">Mostrando 0 resultados</span>
+                <span id="results-count">🔍 Mostrando 0 resultados</span>
+                <div class="results-actions">
+                    <button class="btn-secondary btn-sm" onclick="exportarCatalogo()">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                    <button class="btn-secondary btn-sm" onclick="imprimirCatalogo()">
+                        <i class="fas fa-print"></i> Imprimir
+                    </button>
+                </div>
             </div>
             
             <div id="recursos-container" class="recursos-grid">
@@ -163,53 +238,125 @@
             </div>
             
             <div id="no-results" class="no-results" style="display: none;">
-                <i class="fas fa-search"></i>
-                <h3>No se encontraron resultados</h3>
+                <div class="no-results-animation">
+                    <i class="fas fa-search"></i>
+                    <div class="floating-books">
+                        <i class="fas fa-book"></i>
+                        <i class="fas fa-book-open"></i>
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                </div>
+                <h3>🔍 No se encontraron resultados</h3>
                 <p>Intenta modificar los filtros de búsqueda o agregar nuevos recursos</p>
+                <button class="btn-primary" onclick="openAddModal()">
+                    <i class="fas fa-plus"></i> Agregar el primer recurso
+                </button>
             </div>
         </section>
 
-        <!-- Statistics Section -->
-        <section class="stats-section" id="estadisticas">
-            <h2><i class="fas fa-chart-bar"></i> Estadísticas de la Biblioteca</h2>
+        <!-- Statistics Section Mejorada -->
+        <section class="stats-section glass-effect scroll-reveal" id="estadisticas">
+            <h2>
+                <i class="fas fa-chart-bar"></i> 
+                <span style="background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    Estadísticas de la Biblioteca
+                </span>
+            </h2>
             <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-book"></i></div>
+                <div class="stat-card stagger-animation neon-glow">
+                    <div class="stat-icon" style="background: var(--gradient-primary);">
+                        <i class="fas fa-book"></i>
+                    </div>
                     <div class="stat-info">
-                        <span class="stat-value" id="stat-libros">0</span>
-                        <span class="stat-title">Libros</span>
+                        <span class="stat-value" id="stat-libros" data-target="0">0</span>
+                        <span class="stat-title">📖 Libros</span>
+                    </div>
+                    <div class="stat-trend">
+                        <i class="fas fa-arrow-up"></i> +5 este mes
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+                
+                <div class="stat-card stagger-animation neon-glow">
+                    <div class="stat-icon" style="background: var(--gradient-secondary);">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
                     <div class="stat-info">
-                        <span class="stat-value" id="stat-tesis">0</span>
-                        <span class="stat-title">Tesis</span>
+                        <span class="stat-value" id="stat-tesis" data-target="0">0</span>
+                        <span class="stat-title">🎓 Tesis</span>
+                    </div>
+                    <div class="stat-trend">
+                        <i class="fas fa-arrow-up"></i> +2 este mes
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-project-diagram"></i></div>
+                
+                <div class="stat-card stagger-animation neon-glow">
+                    <div class="stat-icon" style="background: var(--gradient-accent);">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
                     <div class="stat-info">
-                        <span class="stat-value" id="stat-proyectos">0</span>
-                        <span class="stat-title">Proyectos</span>
+                        <span class="stat-value" id="stat-proyectos" data-target="0">0</span>
+                        <span class="stat-title">🚀 Proyectos</span>
+                    </div>
+                    <div class="stat-trend">
+                        <i class="fas fa-arrow-up"></i> +3 este mes
                     </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-newspaper"></i></div>
-                    <div class="stat-info">
-                        <span class="stat-value" id="stat-revistas">0</span>
-                        <span class="stat-title">Revistas</span>
+                
+                <div class="stat-card stagger-animation neon-glow">
+                    <div class="stat-icon" style="background: var(--gradient-primary);">
+                        <i class="fas fa-newspaper"></i>
                     </div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="stat-revistas" data-target="0">0</span>
+                        <span class="stat-title">📰 Revistas</span>
+                    </div>
+                    <div class="stat-trend">
+                        <i class="fas fa-arrow-up"></i> +1 este mes
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Características -->
+        <section class="features-section scroll-reveal" style="margin-top: 4rem;">
+            <h2 style="text-align: center; margin-bottom: 3rem; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.5rem;">
+                ✨ Características Destacadas
+            </h2>
+            <div class="features-grid">
+                <div class="feature-card stagger-animation">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Búsqueda Inteligente</h3>
+                    <p>Encuentra cualquier recurso con nuestra búsqueda avanzada y filtros inteligentes</p>
+                </div>
+                <div class="feature-card stagger-animation">
+                    <div class="feature-icon">📊</div>
+                    <h3>Estadísticas en Tiempo Real</h3>
+                    <p>Monitorea el estado de tu biblioteca con dashboards interactivos</p>
+                </div>
+                <div class="feature-card stagger-animation">
+                    <div class="feature-icon">🌙</div>
+                    <h3>Modo Oscuro</h3>
+                    <p>Interfaz adaptable para trabajar cómodamente en cualquier momento</p>
+                </div>
+                <div class="feature-card stagger-animation">
+                    <div class="feature-icon">📱</div>
+                    <h3>Responsive</h3>
+                    <p>Funciona perfectamente en computadoras, tablets y móviles</p>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Add Resource Modal -->
+    <!-- Add Resource Modal Mejorado -->
     <div id="add-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content glass-effect">
             <div class="modal-header">
-                <h3><i class="fas fa-plus-circle"></i> Agregar Nuevo Recurso</h3>
+                <h3>
+                    <i class="fas fa-plus-circle"></i> 
+                    <span style="background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Agregar Nuevo Recurso
+                    </span>
+                </h3>
                 <button class="close-btn" onclick="closeAddModal()">
                     <i class="fas fa-times"></i>
                 </button>
@@ -218,75 +365,75 @@
             <form id="add-form" onsubmit="agregarRecurso(event)">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="nuevo-tipo">Tipo de Recurso *</label>
+                        <label for="nuevo-tipo">📂 Tipo de Recurso *</label>
                         <select id="nuevo-tipo" required>
                             <option value="">Seleccionar...</option>
-                            <option value="libro">Libro</option>
-                            <option value="tesis">Tesis</option>
-                            <option value="proyecto">Proyecto</option>
-                            <option value="revista">Revista</option>
-                            <option value="articulo">Artículo</option>
+                            <option value="libro">📖 Libro</option>
+                            <option value="tesis">🎓 Tesis</option>
+                            <option value="proyecto">🚀 Proyecto</option>
+                            <option value="revista">📰 Revista</option>
+                            <option value="articulo">📄 Artículo</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="nuevo-estado">Estado *</label>
+                        <label for="nuevo-estado">📊 Estado *</label>
                         <select id="nuevo-estado" required>
-                            <option value="disponible">Disponible</option>
-                            <option value="prestado">Prestado</option>
-                            <option value="mantenimiento">Mantenimiento</option>
+                            <option value="disponible">✅ Disponible</option>
+                            <option value="prestado">📤 Prestado</option>
+                            <option value="mantenimiento">🔧 Mantenimiento</option>
                         </select>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="nuevo-titulo">Título *</label>
+                    <label for="nuevo-titulo">📝 Título *</label>
                     <input type="text" id="nuevo-titulo" placeholder="Título del recurso" required>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="nuevo-autor">Autor *</label>
+                        <label for="nuevo-autor">👤 Autor *</label>
                         <input type="text" id="nuevo-autor" placeholder="Nombre del autor" required>
                     </div>
                     <div class="form-group">
-                        <label for="nuevo-año">Año de Publicación *</label>
+                        <label for="nuevo-año">📅 Año de Publicación *</label>
                         <input type="number" id="nuevo-año" min="1900" max="2024" placeholder="2024" required>
                     </div>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="nueva-materia">Materia *</label>
+                        <label for="nueva-materia">🎯 Materia *</label>
                         <select id="nueva-materia" required>
                             <option value="">Seleccionar...</option>
-                            <option value="matemáticas">Matemáticas</option>
-                            <option value="literatura">Literatura</option>
-                            <option value="ciencias">Ciencias</option>
-                            <option value="historia">Historia</option>
-                            <option value="tecnología">Tecnología</option>
-                            <option value="filosofía">Filosofía</option>
-                            <option value="arte">Arte</option>
+                            <option value="matemáticas">🔢 Matemáticas</option>
+                            <option value="literatura">📚 Literatura</option>
+                            <option value="ciencias">🧪 Ciencias</option>
+                            <option value="historia">🏛️ Historia</option>
+                            <option value="tecnología">💻 Tecnología</option>
+                            <option value="filosofía">🤔 Filosofía</option>
+                            <option value="arte">🎨 Arte</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="nuevo-isbn">ISBN (opcional)</label>
+                        <label for="nuevo-isbn">📊 ISBN (opcional)</label>
                         <input type="text" id="nuevo-isbn" placeholder="978-XXX-XXX-XXX-X">
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="nueva-descripcion">Descripción</label>
+                    <label for="nueva-descripcion">📄 Descripción</label>
                     <textarea id="nueva-descripcion" rows="3" placeholder="Breve descripción del contenido..."></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="nueva-ubicacion">Ubicación Física</label>
+                    <label for="nueva-ubicacion">📍 Ubicación Física</label>
                     <input type="text" id="nueva-ubicacion" placeholder="Ej: Estante A, Nivel 2, Sección 3">
                 </div>
                 
                 <div class="form-actions">
                     <button type="button" class="btn-secondary" onclick="closeAddModal()">
-                        Cancelar
+                        <i class="fas fa-times"></i> Cancelar
                     </button>
                     <button type="submit" class="btn-primary">
                         <i class="fas fa-save"></i> Guardar Recurso
@@ -298,9 +445,14 @@
 
     <!-- View Resource Modal -->
     <div id="view-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content glass-effect">
             <div class="modal-header">
-                <h3><i class="fas fa-eye"></i> Detalle del Recurso</h3>
+                <h3>
+                    <i class="fas fa-eye"></i> 
+                    <span style="background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                        Detalle del Recurso
+                    </span>
+                </h3>
                 <button class="close-btn" onclick="closeViewModal()">
                     <i class="fas fa-times"></i>
                 </button>
@@ -311,18 +463,201 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
+    <!-- Footer Mejorado -->
+    <footer class="footer glass-effect">
         <div class="footer-content">
-            <p>&copy; 2024 Biblioteca Civil - Sistema de Gestión Bibliográfica</p>
-            <p>Desarrollado con 💙 para la comunidad educativa</p>
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <i class="fas fa-book-open"></i>
+                    <span>Biblioteca Civil</span>
+                </div>
+                <p>Sistema de gestión bibliográfica moderno y eficiente</p>
+            </div>
+            <div class="footer-links">
+                <a href="#inicio">🏠 Inicio</a>
+                <a href="#catalogo">📚 Catálogo</a>
+                <a href="#estadisticas">📊 Estadísticas</a>
+                <a href="https://github.com/jhonblits/biblioteca-civil" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Biblioteca Civil - Desarrollado con 💖 por Jhon Yauri</p>
+                <p>✨ Tecnología al servicio del conocimiento</p>
+            </div>
         </div>
     </footer>
+
+    <!-- Back to top button -->
+    <button id="back-to-top" class="back-to-top" onclick="scrollToTop()">
+        <i class="fas fa-chevron-up"></i>
+    </button>
 
     <!-- Scripts -->
     <script src="js/modules/database.js"></script>
     <script src="js/modules/utils.js"></script>
     <script src="js/modules/search.js"></script>
+    <script src="js/modules/animations.js"></script>
     <script src="js/main.js"></script>
-</body>
-</html> 
+    
+    <!-- Script de inicialización -->
+    <script>
+        // Contador animado para estadísticas
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number[data-target]');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const increment = target / 200;
+                let current = 0;
+                
+                const updateCounter = () => {
+                    if (current < target) {
+                        current += increment;
+                        counter.textContent = Math.floor(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                updateCounter();
+            });
+        }
+        
+        // Ocultar loader cuando la página esté lista
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('page-loader').style.display = 'none';
+                animateCounters();
+            }, 1000);
+        });
+        
+        // Scroll reveal animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Back to top button
+        window.addEventListener('scroll', () => {
+            const backToTop = document.getElementById('back-to-top');
+            if (window.scrollY > 300) {
+                backToTop.style.display = 'flex';
+            } else {
+                backToTop.style.display = 'none';
+            }
+        });
+        
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Funciones adicionales
+        function buscarTermino(termino) {
+            document.getElementById('search-input').value = termino;
+            buscarRecursos();
+        }
+        
+        function exportarCatalogo() {
+            window.BibliotecaUtils.mostrarNotificacion('Función de exportación en desarrollo', 'info');
+        }
+        
+        function imprimirCatalogo() {
+            window.print();
+        }
+    </script>
+
+    <style>
+        /* Estilos adicionales para el loader y nuevas características */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-hero);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            color: white;
+        }
+        
+        .loader-content {
+            text-align: center;
+        }
+        
+        .book-loader {
+            margin-bottom: 2rem;
+        }
+        
+        .book {
+            position: relative;
+            width: 60px;
+            height: 40px;
+            margin: 0 auto 1rem;
+        }
+        
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 3px;
+            animation: flip 2s infinite;
+        }
+        
+        .page:nth-child(1) { animation-delay: 0s; }
+        .page:nth-child(2) { animation-delay: 0.5s; }
+        .page:nth-child(3) { animation-delay: 1s; }
+        
+        @keyframes flip {
+            0%, 20% { transform: rotateY(0deg); }
+            50%, 70% { transform: rotateY(-180deg); }
+            100% { transform: rotateY(0deg); }
+        }
+        
+        .progress-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 1rem auto;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-accent);
+            animation: progress 2s ease-in-out infinite;
+        }
+        
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            color: rgba(255,255,255,0.7);
+            font-size: 1.5rem;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
