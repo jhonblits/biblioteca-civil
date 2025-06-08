@@ -20,6 +20,18 @@
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    
+    <!-- Script de verificación de autenticación (debe ejecutarse antes que todo) -->
+    <script>
+        // Verificación inmediata de autenticación
+        (function() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                window.location.href = 'login.html';
+                return;
+            }
+        })();
+    </script>
 </head>
 <body>
     <!-- Loader de página -->
@@ -56,9 +68,11 @@
                 <button class="btn-icon" onclick="toggleTheme()" title="Cambiar tema">
                     <i class="fas fa-moon" id="theme-icon"></i>
                 </button>
-                <button class="btn-primary" onclick="openAddModal()">
+                <!-- El botón "Agregar Recurso" se mostrará solo para usuarios con permisos -->
+                <button class="btn-primary" onclick="openAddModal()" data-permission="add_resources">
                     <i class="fas fa-plus"></i> Agregar Recurso
                 </button>
+                <!-- El badge de usuario se agregará dinámicamente aquí -->
             </div>
         </nav>
     </header>
@@ -69,7 +83,7 @@
         <section class="hero" id="inicio">
             <!-- Video de fondo (opcional) -->
             <video class="hero-video" autoplay muted loop poster="assets/images/library-hero.jpg">
-                <source src="assets/videos/videoplayback.mp4" type="video/mp4">
+                <source src="assets/videos/library-intro.mp4" type="video/mp4">
                 <source src="assets/videos/library-intro.webm" type="video/webm">
             </video>
             
@@ -97,7 +111,7 @@
                     <button class="btn-primary btn-lg" onclick="window.BibliotecaUtils.scrollAElemento('catalogo')">
                         <i class="fas fa-search"></i> Explorar Catálogo
                     </button>
-                    <button class="btn-secondary btn-lg" onclick="openAddModal()">
+                    <button class="btn-secondary btn-lg" onclick="openAddModal()" data-permission="add_resources">
                         <i class="fas fa-plus-circle"></i> Agregar Recurso
                     </button>
                 </div>
@@ -224,7 +238,7 @@
             <div class="results-info">
                 <span id="results-count">🔍 Mostrando 0 resultados</span>
                 <div class="results-actions">
-                    <button class="btn-secondary btn-sm" onclick="exportarCatalogo()">
+                    <button class="btn-secondary btn-sm" onclick="exportarCatalogo()" data-permission="view_reports">
                         <i class="fas fa-download"></i> Exportar
                     </button>
                     <button class="btn-secondary btn-sm" onclick="imprimirCatalogo()">
@@ -248,7 +262,7 @@
                 </div>
                 <h3>🔍 No se encontraron resultados</h3>
                 <p>Intenta modificar los filtros de búsqueda o agregar nuevos recursos</p>
-                <button class="btn-primary" onclick="openAddModal()">
+                <button class="btn-primary" onclick="openAddModal()" data-permission="add_resources">
                     <i class="fas fa-plus"></i> Agregar el primer recurso
                 </button>
             </div>
@@ -343,6 +357,16 @@
                     <h3>Responsive</h3>
                     <p>Funciona perfectamente en computadoras, tablets y móviles</p>
                 </div>
+            </div>
+        </section>
+
+        <!-- Sección de Actividad Reciente (solo para bibliotecarios y administradores) -->
+        <section class="activity-section scroll-reveal" data-role="bibliotecario" style="margin-top: 4rem;">
+            <h2 style="text-align: center; margin-bottom: 2rem; background: var(--gradient-primary); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; font-size: 2rem;">
+                📈 Actividad Reciente
+            </h2>
+            <div class="activity-feed" id="activity-feed">
+                <!-- Se cargará dinámicamente -->
             </div>
         </section>
     </main>
@@ -484,6 +508,9 @@
             <div class="footer-bottom">
                 <p>&copy; 2024 Biblioteca Civil - Desarrollado con 💖 por Jhon Yauri</p>
                 <p>✨ Tecnología al servicio del conocimiento</p>
+                <div class="user-session-info" id="session-info" style="margin-top: 1rem; font-size: 0.875rem; color: var(--text-muted);">
+                    <!-- Se mostrará información de la sesión aquí -->
+                </div>
             </div>
         </div>
     </footer>
@@ -494,6 +521,7 @@
     </button>
 
     <!-- Scripts -->
+    <script src="js/modules/auth.js"></script>
     <script src="js/modules/database.js"></script>
     <script src="js/modules/utils.js"></script>
     <script src="js/modules/search.js"></script>
@@ -502,6 +530,107 @@
     
     <!-- Script de inicialización -->
     <script>
+        // Verificar y mostrar información de sesión
+        function showSessionInfo() {
+            const session = window.BibliotecaAuth?.getCurrentSession();
+            if (session) {
+                const sessionInfo = document.getElementById('session-info');
+                if (sessionInfo) {
+                    sessionInfo.innerHTML = `
+                        Sesión activa: ${session.name} (${window.BibliotecaAuth.ROLE_PERMISSIONS[session.role].name}) | 
+                        Último acceso: ${new Date(session.loginTime).toLocaleString()}
+                    `;
+                }
+            }
+        }
+
+        // Cargar actividad reciente para bibliotecarios/administradores
+        function loadRecentActivity() {
+            if (window.BibliotecaAuth?.hasAnyRole(['bibliotecario', 'administrador'])) {
+                const activityFeed = document.getElementById('activity-feed');
+                if (activityFeed) {
+                    const logs = window.BibliotecaAuth.getActivityLogs(10);
+                    
+                    if (logs.length > 0) {
+                        activityFeed.innerHTML = logs.map(log => `
+                            <div class="activity-item" style="
+                                padding: 1rem;
+                                background: var(--bg-secondary);
+                                border-radius: var(--border-radius);
+                                margin-bottom: 0.5rem;
+                                border-left: 4px solid var(--primary-color);
+                            ">
+                                <div style="display: flex; justify-content: space-between; align-items: start;">
+                                    <div>
+                                        <strong>${log.action}</strong>: ${log.description}
+                                        <br>
+                                        <small style="color: var(--text-muted);">
+                                            Usuario: ${log.user} (${log.userRole})
+                                        </small>
+                                    </div>
+                                    <small style="color: var(--text-muted);">
+                                        ${new Date(log.timestamp).toLocaleString()}
+                                    </small>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        activityFeed.innerHTML = `
+                            <div style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                                <i class="fas fa-history" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                <p>No hay actividad reciente registrada</p>
+                            </div>
+                        `;
+                    }
+                }
+            }
+        }
+
+        // Función personalizada para agregar recurso con verificación de permisos
+        function agregarRecurso(event) {
+            event.preventDefault();
+            
+            // Verificar permisos antes de proceder
+            if (!window.BibliotecaAuth?.hasPermission('add_resources')) {
+                window.BibliotecaUtils?.mostrarNotificacion(
+                    'No tienes permisos para agregar recursos', 
+                    'error'
+                );
+                return;
+            }
+            
+            // Registrar actividad
+            window.BibliotecaAuth?.logActivity(
+                'add_resource_attempt', 
+                'Usuario intentó agregar un nuevo recurso'
+            );
+            
+            // Continuar con la lógica original de agregar recurso
+            // (aquí iría el código original de la función agregarRecurso)
+            window.BibliotecaUtils?.mostrarNotificacion(
+                'Funcionalidad en desarrollo - Se agregará con validación de permisos', 
+                'info'
+            );
+        }
+
+        // Función personalizada para abrir modal con verificación de permisos
+        function openAddModal() {
+            if (!window.BibliotecaAuth?.hasPermission('add_resources')) {
+                window.BibliotecaUtils?.mostrarNotificacion(
+                    'No tienes permisos para agregar recursos. Contacta al bibliotecario.', 
+                    'warning'
+                );
+                return;
+            }
+            
+            const modal = document.getElementById('add-modal');
+            if (modal) {
+                modal.classList.add('show');
+                modal.style.display = 'flex';
+                document.getElementById('add-form')?.reset();
+            }
+        }
+
         // Contador animado para estadísticas
         function animateCounters() {
             const counters = document.querySelectorAll('.stat-number[data-target]');
@@ -528,6 +657,8 @@
             setTimeout(() => {
                 document.getElementById('page-loader').style.display = 'none';
                 animateCounters();
+                showSessionInfo();
+                loadRecentActivity();
             }, 1000);
         });
         
@@ -566,98 +697,163 @@
         // Funciones adicionales
         function buscarTermino(termino) {
             document.getElementById('search-input').value = termino;
-            buscarRecursos();
+            if (typeof buscarRecursos === 'function') {
+                buscarRecursos();
+            }
         }
         
         function exportarCatalogo() {
-            window.BibliotecaUtils.mostrarNotificacion('Función de exportación en desarrollo', 'info');
+            if (!window.BibliotecaAuth?.hasPermission('view_reports')) {
+                window.BibliotecaUtils?.mostrarNotificacion(
+                    'No tienes permisos para exportar reportes', 
+                    'error'
+                );
+                return;
+            }
+            window.BibliotecaUtils?.mostrarNotificacion('Función de exportación en desarrollo', 'info');
         }
         
         function imprimirCatalogo() {
             window.print();
         }
+
+        // Funciones del modal (temporales hasta que se integre completamente)
+        function closeAddModal() {
+            const modal = document.getElementById('add-modal');
+            if (modal) {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
+        }
+
+        function closeViewModal() {
+            const modal = document.getElementById('view-modal');
+            if (modal) {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('biblioteca-tema', newTheme);
+            
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+
+            window.BibliotecaUtils?.mostrarNotificacion(
+                `Tema cambiado a ${newTheme === 'dark' ? 'oscuro' : 'claro'}`,
+                'info'
+            );
+        }
+
+        // Inicializar tema
+        function initTheme() {
+            const savedTheme = localStorage.getItem('biblioteca-tema') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const icon = document.getElementById('theme-icon');
+            if (icon) {
+                icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            
+            // Verificar que el sistema de autenticación esté funcionando
+            if (window.BibliotecaAuth) {
+                console.log('✅ Sistema de autenticación cargado');
+                const session = window.BibliotecaAuth.getCurrentSession();
+                if (session) {
+                    console.log(`👤 Usuario autenticado: ${session.name} (${session.role})`);
+                }
+            }
+        });
     </script>
 
     <style>
-        /* Estilos adicionales para el loader y nuevas características */
-        .page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-hero);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            color: white;
+        /* Estilos adicionales para elementos de autenticación */
+        .user-info {
+            margin-left: 1rem;
         }
-        
-        .loader-content {
-            text-align: center;
-        }
-        
-        .book-loader {
-            margin-bottom: 2rem;
-        }
-        
-        .book {
+
+        .user-badge {
             position: relative;
-            width: 60px;
-            height: 40px;
-            margin: 0 auto 1rem;
         }
-        
-        .page {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: white;
-            border-radius: 3px;
-            animation: flip 2s infinite;
+
+        .user-dropdown {
+            position: relative;
         }
-        
-        .page:nth-child(1) { animation-delay: 0s; }
-        .page:nth-child(2) { animation-delay: 0.5s; }
-        .page:nth-child(3) { animation-delay: 1s; }
-        
-        @keyframes flip {
-            0%, 20% { transform: rotateY(0deg); }
-            50%, 70% { transform: rotateY(-180deg); }
-            100% { transform: rotateY(0deg); }
+
+        .user-menu {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+            border: 1px solid var(--bg-tertiary);
         }
-        
-        .progress-bar {
-            width: 200px;
-            height: 4px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 2px;
-            overflow: hidden;
-            margin: 1rem auto;
+
+        .user-menu .menu-item {
+            transition: background-color 0.2s ease;
         }
-        
-        .progress-fill {
-            height: 100%;
-            background: var(--gradient-accent);
-            animation: progress 2s ease-in-out infinite;
+
+        .user-menu .menu-item:hover {
+            background-color: var(--bg-secondary);
         }
-        
-        @keyframes progress {
-            0% { width: 0%; }
-            100% { width: 100%; }
+
+        .activity-section {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xl);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
         }
-        
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: bounce 2s infinite;
-            color: rgba(255,255,255,0.7);
-            font-size: 1.5rem;
+
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
         }
-        
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-            40% { transform: translateX(-50%) translateY(-10px); }
+
+        .activity-item {
+            transition: all var(--transition-normal);
+        }
+
+        .activity-item:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Ocultar elementos para roles específicos */
+        [data-permission],
+        [data-role] {
+            transition: opacity 0.3s ease;
+        }
+
+        /* Responsive para elementos de autenticación */
+        @media (max-width: 768px) {
+            .user-info {
+                margin-left: 0;
+                margin-top: 1rem;
+                width: 100%;
+            }
+
+            .user-badge {
+                justify-content: space-between;
+            }
+
+            .nav-actions {
+                flex-direction: column;
+                width: 100%;
+                gap: 1rem;
+            }
+
+            .activity-section {
+                padding: var(--spacing-lg);
+            }
+        }
+    </style>
+</body>
+</html>
